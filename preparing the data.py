@@ -8,6 +8,14 @@ Created on Thu Jul 19 18:23:51 2018
 import pandas as pd
 import nltk
 import json
+from nltk.stem import PorterStemmer
+
+porter_stemmer=PorterStemmer()
+
+def stem_sentences(sentence):
+    tokens = sentence.split()
+    stemmed_tokens = [porter_stemmer.stem(token) for token in tokens]
+    return ' '.join(stemmed_tokens)
 
 data=pd.read_excel('Sample - Superstore.xls')
 
@@ -21,10 +29,13 @@ len(data)
 #prod[prod>10]
 
 dic={}
-dic['columns']={'list':list(data.columns), 'count':len(data.columns)}
+
+
+
+dic['columns']={'list':list(data.columns), 'stem':[stem_sentences(item) for item in list(data.columns)] , 'count':len(data.columns)}
 for col in data.select_dtypes(include=['object']).columns:
     if '_id' not in col.lower():
-        dic[col]={'list': data[col].unique().tolist(), 'count': len(data[col].unique())}
+        dic[col]={'list': data[col].unique().tolist(), 'stem':[stem_sentences(item) for item in data[col].unique().tolist()] , 'count': len(data[col].unique())}
 
 
 'Texas' in dic['State']['list']

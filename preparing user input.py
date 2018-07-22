@@ -8,18 +8,26 @@ Created on Fri Jul 20 23:52:09 2018
 import pandas as pd
 import nltk
 import json
+from nltk.stem import PorterStemmer
+
+porter_stemmer=PorterStemmer()
+#
+#def stem_sentences(sentence):
+#    tokens = sentence.split()
+#    stemmed_tokens = [porter_stemmer.stem(token) for token in tokens]
+#    return ' '.join(stemmed_tokens)
 
 with open('dic.txt', 'r') as infile: 
     dic=json.load(infile)
 
 
-input_text='worst performing category in new york'
+input_text='worst performing categories in new york that are shipped same day'
 
 n=len(input_text)
 
 from sklearn.feature_extraction.text import CountVectorizer
 
-vec=CountVectorizer(ngram_range=(1,n), stop_words='english')
+vec=CountVectorizer(ngram_range=(1,n))
 
 ngrams=vec.fit_transform([input_text])
 
@@ -27,22 +35,35 @@ vocab=vec.vocabulary_
 
 to_find=list(vocab)
 
+from nltk.corpus import stopwords
+stop = set(stopwords.words('english'))
+
+to_find=list(set(to_find)-stop)
+
 to_find.sort(key=len, reverse=True)
 
 all_entities={}
 for entity in to_find:
-#    search_term='new york'
+#    entity='worst performing categories new york'
 #    print (entity)
     search_term_itr=entity.strip().split()
 
     ite=dic.items()
     all_keys={}
     for key, values in ite:
+#        key='columns'
+#        values={'list': ['Row_ID', 'Order_ID', 'Order_Date', 'Ship_Date', 'Ship_Mode', 'Customer_ID', 'Customer_Name', 'Segment', 'Country', 'City', 'State', 'Postal_Code', 'Region', 'Product_ID', 'Category', 'Sub-Category', 'Product_Name', 'Sales', 'Quantity', 'Discount', 'Profit'], 'count': 21}
         flag=1
+        t_df=pd.DataFrame(values)
+#        t_df.columns=['list']
+#        t_df['stem']=t_df['list'].apply(stem_sentences)
         for search_term in search_term_itr:
-            if search_term.lower() in ''.join(values['list']).lower():
+#            search_term='categories'
+            search_term=porter_stemmer.stem(search_term)
+            if search_term in t_df['stem'].str.cat():
                 key_iden=key
-            c_set=set(filter(lambda x: search_term.lower() in x.lower(), values['list']))
+            c_set=set(t_df[t_df['stem'].str.contains(search_term)]['list'])
+#            c_set=set(filter(lambda x: search_term.lower() in x.lower(), values['list']))
             if flag==1:
                 needed_set=c_set
                 flag=0
