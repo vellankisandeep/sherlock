@@ -29,6 +29,8 @@ def get_entities(input_text):
     
     vec=CountVectorizer(ngram_range=(1,n))
     
+    ngrams=vec.fit_transform([input_text])
+    
     vocab=vec.vocabulary_
     
     to_find=list(vocab)
@@ -66,7 +68,7 @@ def get_entities(input_text):
     
     found_entities['similarity']=found_entities.apply(lambda row:sim(row), axis=1)    
     
-    print (found_entities)
+#    print (found_entities)
         
     
     keys=found_entities.entity.unique().tolist()
@@ -89,13 +91,13 @@ def get_entities(input_text):
     found_entities[['list','similarity']]
     found_entities[['entity','col_name']]
     found_entities=found_entities.sort_values(['entity','similarity'], ascending=[True, False])
-    found_entities=found_entities[found_entities.similarity>0.45]
+#    found_entities=found_entities[found_entities.similarity>0.3]
     
     #idx = found_entities.groupby(['entity'])['similarity'].transform(max) == found_entities['similarity']
     
     #found_entities=found_entities[idx]
     
-    print (found_entities)        
+    return found_entities
         
             
             
