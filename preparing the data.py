@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 19 18:23:51 2018
-
-@author: svellanki
-"""
-
 import pandas as pd
 import nltk
 import json
@@ -30,16 +23,37 @@ len(data)
 
 dic={}
 
+dic_df=pd.DataFrame(columns=['col_name', 'list', 'stem'])
+#dic_df.columns=['col_name', 'list', 'stem']
 
+l=list(data.columns)
+st=[stem_sentences(item) for item in list(data.columns)]
+c= ['column']*len(l)
+temp_df=pd.DataFrame([c,l,st]).transpose()
+temp_df.columns=dic_df.columns
 
-dic['columns']={'list':list(data.columns), 'stem':[stem_sentences(item) for item in list(data.columns)] , 'count':len(data.columns)}
+dic_df=dic_df.append(temp_df)
+
 for col in data.select_dtypes(include=['object']).columns:
     if '_id' not in col.lower():
-        dic[col]={'list': data[col].unique().tolist(), 'stem':[stem_sentences(item) for item in data[col].unique().tolist()] , 'count': len(data[col].unique())}
+        l=data[col].unique().tolist()
+        st=[stem_sentences(item) for item in data[col].unique().tolist()]
+        c= [col]*len(l)
+        temp_df=pd.DataFrame([c,l,st]).transpose()
+        temp_df.columns=dic_df.columns
 
-
-'Texas' in dic['State']['list']
-
-with open('dic.txt', 'w') as outfile: 
-    json.dump(dic, outfile)
+        dic_df=dic_df.append(temp_df)
         
+print (dic_df)
+        
+
+
+#dic['columns']={'list':list(data.columns), 'stem':[stem_sentences(item) for item in list(data.columns)] , 'count':len(data.columns)}
+#for col in data.select_dtypes(include=['object']).columns:
+#    if '_id' not in col.lower():
+#        dic[col]={'list': data[col].unique().tolist(), 'stem':[stem_sentences(item) for item in data[col].unique().tolist()] , 'count': len(data[col].unique())}
+#
+#
+#with open('dic.txt', 'w') as outfile: 
+#    json.dump(dic, outfile)
+    
