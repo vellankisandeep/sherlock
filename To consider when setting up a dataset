@@ -1,0 +1,2 @@
+1. all ID columns need to have ID appended to them
+2. all calculated columns need to be made separately. Algo cannot make the calculations by itself
