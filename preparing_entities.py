@@ -1,3 +1,45 @@
+""""
+POS tag list:
+
+CC	coordinating conjunction
+CD	cardinal digit
+DT	determiner
+EX	existential there (like: "there is" ... think of it like "there exists")
+FW	foreign word
+IN	preposition/subordinating conjunction
+JJ	adjective	'big'
+JJR	adjective, comparative	'bigger'
+JJS	adjective, superlative	'biggest'
+LS	list marker	1)
+MD	modal	could, will
+NN	noun, singular 'desk'
+NNS	noun plural	'desks'
+NNP	proper noun, singular	'Harrison'
+NNPS	proper noun, plural	'Americans'
+PDT	predeterminer	'all the kids'
+POS	possessive ending	parent's
+PRP	personal pronoun	I, he, she
+PRP$	possessive pronoun	my, his, hers
+RB	adverb	very, silently,
+RBR	adverb, comparative	better
+RBS	adverb, superlative	best
+RP	particle	give up
+TO	to	go 'to' the store.
+UH	interjection	errrrrrrrm
+VB	verb, base form	take
+VBD	verb, past tense	took
+VBG	verb, gerund/present participle	taking
+VBN	verb, past participle	taken
+VBP	verb, sing. present, non-3d	take
+VBZ	verb, 3rd person sing. present	takes
+WDT	wh-determiner	which
+WP	wh-pronoun	who, what
+WP$	possessive wh-pronoun	whose
+WRB	wh-abverb	where, when
+
+
+'CC', 'DT', 'IN', 'PDT', 'TO', 'UH'
+"""
 
 import pandas as pd
 import nltk
@@ -16,14 +58,24 @@ porter_stemmer=PorterStemmer()
 #    stemmed_tokens = [porter_stemmer.stem(token) for token in tokens]
 #    return ' '.join(stemmed_tokens)
 
-dic_df=pd.read_csv('dic_df.csv')
+dic_df=pd.read_csv('dic_df.csv', encoding='utf8')
 
 
-input_text='sales of customer david'
+waste_pos=['CC', 'DT', 'IN', 'PDT', 'TO', 'UH']
 #input_text='expenditure per capita of india'
 
 def get_entities(input_text):
     n=len(input_text)
+    
+    text_woin=''
+
+    for each in input_text.split():
+        tag=nltk.pos_tag([each])
+        print (tag[0][1], each)
+        if tag[0][1] not in waste_pos:
+            text_woin=text_woin+ " " + each
+    
+    input_text=text_woin.strip()
     
     from sklearn.feature_extraction.text import CountVectorizer
     
@@ -91,7 +143,7 @@ def get_entities(input_text):
     found_entities[['list','similarity']]
     found_entities[['entity','col_name']]
     found_entities=found_entities.sort_values(['entity','similarity'], ascending=[True, False])
-#    found_entities=found_entities[found_entities.similarity>0.3]
+    found_entities=found_entities[found_entities.similarity>0.3]
     
     #idx = found_entities.groupby(['entity'])['similarity'].transform(max) == found_entities['similarity']
     

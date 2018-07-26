@@ -46,7 +46,7 @@ for col in data.select_dtypes(include=['object']).columns:
         
 print (dic_df)
 
-dic_df.to_csv('dic_df.csv')     
+dic_df.to_csv('dic_df.csv', encoding='utf8')     
 
 
 #dic['columns']={'list':list(data.columns), 'stem':[stem_sentences(item) for item in list(data.columns)] , 'count':len(data.columns)}
