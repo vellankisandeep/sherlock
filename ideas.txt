@@ -1,0 +1,3 @@
+ways to arrive at final list of entities
+   -if column name exists, check any column values exists
+   -if a name column, check if the whole words are used eliminate if not being used
